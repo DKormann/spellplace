@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+      <div class="title">
+        <h1>Tarcarot</h1>
+      </div>
+      <div id="interface">
+
+
+        <div id = "text">
+          <p>What is your name?</p>
+        </div>
+        <input id = "terminal" name="" value="">
+      </div>
+
+  </body>
+</html>
+
+<style media="screen">
+  body{
+    margin:0;
+    background:#111;
+  }
+  .title{
+    text-align:center;
+  }
+  #interface{
+    /* text-align:center; */
+    color: red;
+    overflow: scroll;
+    max-height:70vh;
+  }
+  h1{
+    color:#911;
+  }
+  p{
+    color:grey;
+    font-size: 3vh;
+  }
+  #text{
+    margin-top:10vh;
+    margin-left:20vw;
+    text-align: left;
+    /* max-height:50vh; */
+    /* overflow:hidden; */
+  }
+  #terminal{
+    margin-left:20vw;
+    margin-bottom:10vh;
+    color:grey;
+    font-size:3vh;
+    height: 5vh;
+    width: 70vw;
+    background:#100;
+  }
+</style>
+<script>
+  te = document.getElementById('text')
+  term = document.getElementById("terminal")
+  function logTab(e){
+    term.scrollIntoView()
+    if(e.code == "Enter"){
+      input = term.value
+      term.value = ""
+      write(input)
+      execute(input)
+      console.log(input);
+    }
+  }
+  term.addEventListener('keydown',logTab)
+  console.log(te);
+
+  function write(text){
+    text = text.replace('\n','</p><p>')
+
+    te.innerHTML += "<p>" + text + "</p>"
+    term.scrollIntoView()
+  }
+
+  state = "void"
+  name = ""
+  key =""
+
+
+  function execute(command){
+    words = command.split(' ')
+    if (state == "void"){
+      if (words.length !=1){
+        write("name must be one word")
+        return
+      }
+      name = words[0]
+      call("enter "+name)
+
+    }else if (state == "authentication"){
+      key = words[0]
+      te.innerHTML = te.innerHTML.replace(key,"*****")
+      if (words.length !=1){
+        write("key must be one word")
+        return
+      }
+      call("authenticate "+name+" "+key)
+
+    }else if (state == "command"){
+      if (words.length != 0 ){
+
+        call("command "+name+" "+key+" "+command)
+      }
+    }
+  }
+
+  function parse(answer){
+    if (answer == "exists"){
+      write("that player exists. what is the key?")
+      state = "authentication"
+    }else if(answer == "authenticated"){
+      write("welcome "+name)
+      state = "command"
+    }else{
+      write(answer)
+    }
+  }
+
+  function call(text) {
+      var Http = new XMLHttpRequest();
+      Http.onreadystatechange = function () {
+          if (Http.readyState == 4) {
+              parse(Http.response);
+          }
+      }
+      Http.open('post', 'http://localhost:3000/hiserver', true);
+      Http.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+
+      Http.send(text);
+  }
+
+
+
+
+</script>
