@@ -40,11 +40,15 @@ class Player:
     def take_damage(self, damage):
         self.hp -= damage
         if self.hp <= 0:
+            ret =  "died"
             self.position.players.pop(self.name)
+            print(self.position.players)
             self.position = None
             self.energy = 0
             self.energy_regen = 0
             self.max_energy = 0
+            self.world.players.pop(self.name)
+            return ret
 
     def status(self):
         Nhp = self.hp/self.max_hp 
@@ -104,7 +108,7 @@ def cast_hit(self,args):
         target_player = self.position.players[target]
         if self.energy > 20:
             self.energy -=20
-            target_player.take_damage(5)
+            return target_player.take_damage(5)
                 
 
 def rename_node(self,args):
@@ -172,6 +176,8 @@ def get_node_from_path(self,path):
 def go_to_node(self, path):
 
     node = get_node_from_path(self, path)
+    if node == None:
+        return 'cant find that node'
 
     self.position.players.pop(self.name)
     self.position = node
@@ -261,7 +267,7 @@ def play(self):
             
             words = command.split()
 
-            execute(self, words)
+            print(execute(self, words))
 
             if self.hp <= 0:
                 print('you died')
