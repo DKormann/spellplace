@@ -139,7 +139,7 @@ def link_node(self, path):
     self.position.neighbors[node.name] = node
     
 def remove_link(self, path):
-    if self.position.master == self:
+    if self.position.master.name == self.name:
         for name in path:
             node = self.position.neighbors[name]
             node.neighbors.pop(self.position.name)
