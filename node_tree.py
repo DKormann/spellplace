@@ -172,6 +172,9 @@ def get_node_from_path(self,path):
 def go_to_node(self, path):
 
     node = get_node_from_path(self, path)
+    
+    if node == None:
+        return "cant find node"
 
     self.position.players.pop(self.name)
     self.position = node
@@ -261,7 +264,7 @@ def play(self):
             
             words = command.split()
 
-            execute(self, words)
+            print(execute(self, words))
 
             if self.hp <= 0:
                 print('you died')
