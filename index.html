@@ -97,14 +97,35 @@
       call("enter "+name)
 
     }else if (state == "authentication"){
-      key = words[0]
-      te.innerHTML = te.innerHTML.replace(key,"*****")
+      key = Hash(words[0])
+      te.innerHTML = te.innerHTML.replace(words[0],"*****")
       if (words.length !=1){
         write("key must be one word")
         return
       }
       call("authenticate "+name+" "+key)
+    }else if (state == "create?"){
+      if ( ["yes","y","Y","Yes","YES"].includes(words[0])){
+        state = "create1"
+        write ("enter new key")
+      }else{
+        write("what is your name")
+        state = "void"
+      }
+    }else if (state == "create1"){
+      key = Hash(words[0])
+      te.innerHTML = te.innerHTML.replace(words[0],"*****")
+      write ("reenter the new key")
+      state = "create2"
+    }else if (state == "create2"){
+      te.innerHTML = te.innerHTML.replace(words[0],"*****")
 
+      if (key == Hash(words[0])){
+        call("create "+name+" "+key)
+      }else{
+        write("keys dont match.\nwhat is your name")
+        state = "void"
+      }
     }else if (state == "command"){
       if (words.length != 0 ){
 
@@ -120,6 +141,16 @@
     }else if(answer == "authenticated"){
       write("welcome "+name)
       state = "command"
+    }else if (answer == "denied"){
+      state ="void"
+      write("Wrong key. \nWhat is yout name?")
+    }else if(answer == "newplayer"){
+      state = "create?"
+      write("that name is new.\n Do you want to create new player?")
+    }else if (answer == "created"){
+      state = "command"
+      write("new player created. Welcome "+name)
+
     }else{
       write(answer)
     }
@@ -137,6 +168,22 @@
 
       Http.send(text);
   }
+  function Hash(string) {
+
+        var hash = 0;
+
+        if (string.length == 0) return hash;
+
+        for (i = 0; i < string.length; i++) {
+            char = string.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash;
+        }
+
+        return hash;
+    }
+
+
 
 
 

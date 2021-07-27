@@ -285,6 +285,12 @@ def parse_remote_input(msg):
         key = words[2]
         if player.key == key:
             return "authenticated"
+        else:
+            return "denied"
+    if flag == "create":
+        key = words [2]
+        player = Player(name, key, world.root, world)
+        return "created"
     if flag == "command":
         key = words[2]
         command = words[3:]
